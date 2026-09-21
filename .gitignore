@@ -1,0 +1,11 @@
+# the signing key and its password never leave the phone they were made on
+keys/
+*.keystore
+*.jks
+*-key-*.txt
+
+# what the build makes
+build/
+out/
+*.apk
+*.idsig
