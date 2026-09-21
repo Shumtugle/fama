@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Fama &mdash; what the channels announce, on one board</title>
+<meta name="description" content="An Android board of meetings, gathered by itself from the public pages of channels. No server, no account, no sign-in anywhere.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Fama">
+<meta property="og:description" content="What the channels announce, on one board. No server, no account.">
+<meta property="og:image" content="./img/icon.png">
+<link rel="icon" href="./img/icon.png">
+<style>
+:root{
+  --deep:#170c09; --night:#211310; --card:#2b1915;
+  --gold:#e4a93c; --gold-dim:#a8742a; --ink:#f1e4d6; --dim:#b59e93;
+  --line:#3b2520; --cloth:#a1301f; --cloth-hi:#bc4630;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--deep); color:var(--ink);
+  font:16px/1.65 Georgia,"Times New Roman",serif;
+}
+a{color:var(--gold); text-decoration:none}
+a:hover{color:#f5cf85}
+a:focus-visible{outline:2px solid var(--gold); outline-offset:3px; border-radius:2px}
+.wrap{max-width:700px; margin:0 auto; padding:0 22px}
+
+header{background:var(--night); border-bottom:1px solid var(--line); padding:26px 0 44px}
+.eyebrow{
+  font-family:system-ui,sans-serif; font-size:12.5px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--dim); text-align:center; margin:0 0 22px;
+}
+.eyebrow b{color:var(--gold); font-weight:600}
+
+/* The call leaving the trumpet.
+
+   Fama is report, the thing that travels from one end of a city to the
+   other; the mark is her trumpet. So the mark does not sit still: three
+   thin arcs leave the mouth of the bell, one after another, widen along
+   the line the trumpet points, and fade. The call goes out once and then
+   waits, because a thing that never stops sounding stops being heard. */
+.herald{position:relative; width:96px; height:96px; margin:0 auto 20px}
+.mark{display:block; width:96px; height:96px; border-radius:23px}
+.call{
+  position:absolute; left:84%; top:29%; width:64px; height:64px;
+  margin:-32px 0 0 -32px; border-radius:50%; pointer-events:none;
+  border:1.5px solid transparent; border-right-color:var(--gold);
+  opacity:0; transform:rotate(-22deg) scale(.2);
+  animation:call 9s cubic-bezier(.2,.6,.3,1) infinite;
+}
+.call:nth-child(3){animation-delay:.35s}
+.call:nth-child(4){animation-delay:.7s}
+@keyframes call{
+  0%   {opacity:0; transform:rotate(-22deg) scale(.2)}
+  3%   {opacity:.9}
+  16%  {opacity:0; transform:rotate(-22deg) scale(1.7)}
+  100% {opacity:0; transform:rotate(-22deg) scale(1.7)}
+}
+@media (prefers-reduced-motion:reduce){
+  .call{animation:none; display:none}
+}
+
+h1{margin:0; font-size:44px; font-weight:normal; letter-spacing:.02em; text-align:center}
+.tag{color:var(--gold); font-style:italic; font-size:20px; text-align:center; margin:10px 0 0}
+.get{text-align:center; margin:26px 0 14px}
+.get a{
+  display:inline-block; margin:5px; padding:11px 22px; border-radius:3px;
+  border:1px solid var(--gold-dim); font-family:system-ui,sans-serif; font-size:15px;
+}
+.get a.solid{background:var(--cloth); color:var(--ink); border-color:var(--cloth)}
+.get a:hover{background:rgba(228,169,60,.12)}
+.get a.solid:hover{background:var(--cloth-hi); color:var(--ink)}
+.spec{text-align:center; color:var(--dim); font-family:system-ui,sans-serif; font-size:13px; margin:0}
+
+section{padding:44px 0; border-bottom:1px solid var(--line)}
+.label{
+  font-family:system-ui,sans-serif; font-size:11.5px; letter-spacing:.17em;
+  text-transform:uppercase; color:var(--gold-dim); margin:0 0 6px;
+}
+h2{font-size:27px; font-weight:normal; margin:0 0 18px; letter-spacing:.01em}
+h3{font-size:19px; font-weight:normal; margin:28px 0 6px; color:var(--gold)}
+p{margin:0 0 15px}
+p.lead{font-size:19px}
+.quiet{color:var(--dim)}
+
+/* The screens are the phone's own: narrow, tall, and shown at the size a
+   hand holds them, never stretched to the width of the column. */
+figure{margin:28px auto 0; max-width:300px}
+figure img{width:100%; display:block; border-radius:18px; border:1px solid var(--line)}
+figcaption{font-family:system-ui,sans-serif; font-size:12.5px; color:var(--dim);
+  margin-top:9px; text-align:center}
+
+pre{
+  background:var(--night); border:1px solid var(--line); border-radius:4px;
+  padding:14px 16px; overflow-x:auto; font-size:12.5px; line-height:1.55;
+  font-family:ui-monospace,Menlo,Consolas,monospace; color:var(--ink);
+}
+code{font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13.5px; color:var(--gold)}
+.print{word-break:break-all; font-size:12.5px}
+footer{padding:34px 0 56px; color:var(--dim); font-size:13.5px;
+  font-family:system-ui,sans-serif; text-align:center}
+footer a{color:var(--dim); border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--gold)}
+footer .sep{opacity:.4; padding:0 7px}
+@media (max-width:600px){
+  h1{font-size:34px} .tag{font-size:17px} h2{font-size:23px}
+  p.lead{font-size:17px} figure{max-width:260px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Fama &middot; <b>v0.3.0</b> &middot; Android board of meetings</p>
+    <div class="herald">
+      <img class="mark" src="./img/icon.png" alt="">
+      <span class="call"></span><span class="call"></span><span class="call"></span>
+    </div>
+    <h1>Fama</h1>
+    <p class="tag">What the channels announce, on one board.</p>
+    <div class="get">
+      <a class="solid" href="https://github.com/Shumtugle/fama/releases/download/v0.3.0/fama-0.3.0.apk">Download the APK</a>
+      <a href="https://github.com/Shumtugle/fama">View source</a>
+    </div>
+    <p class="spec">Android 8+ &middot; ~130 KB &middot; no libraries &middot; sideload</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <p class="label">What it is for</p>
+    <h2>One board for meetings announced in many channels</h2>
+    <p class="lead">A reading club posts its next meeting in its own channel, a library
+      in another, a bookshop in a third. Nobody follows thirty channels to find out
+      what is on this week.</p>
+    <p>Share a channel to Fama once, and whatever it announces stands on one board,
+      by day and by hour, with the book and the place. The board reads the channels
+      again when it is opened after half an hour, and new meetings come in while it
+      is looked at. A meeting whose day has passed leaves by itself.</p>
+    <p>Tap a card and the announcement opens in place, in the board&rsquo;s own type,
+      its links live, including the ones hidden under words. One more tap hands it
+      to the phone&rsquo;s calendar, filled in.</p>
+    <figure>
+      <img src="./img/board.jpg" alt="The board: days as headings, each meeting a card with its hour, the club, the book and the place, and the channel's picture.">
+      <figcaption>The board, day by day</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">How it reads</p>
+    <h2>Weighed, not matched</h2>
+    <p>A day still ahead is the spine of an announcement. On it the other witnesses
+      add their weight: a word that calls people together, the channel&rsquo;s own tag,
+      an hour, a place, a title in quotes. A post that calls nobody and carries no tag
+      has to bring everything at once, so a sale that ends on Friday is not a meeting.</p>
+    <h3>Dates the way people write them</h3>
+    <p>The twenty-seventh of September, 27.09, this Saturday, next Saturday, tomorrow,
+      three Thursdays of one month in one line &mdash; all counted from the day the
+      post was written, not from today.</p>
+    <h3>Forgiving words</h3>
+    <p>Typos by the length of the word, two letters swapped, a picture glued to a word,
+      the wrong keyboard layout, a letter held down too long.</p>
+    <h3>Your own words</h3>
+    <p>The words that call and the words that turn a post away stand as a cloud, each
+      as large as the number of announcements it found at the last reading &mdash; the
+      ones doing the work in front, the idle ones small and pale. Switch a word off, or
+      add one of your own: a phrase like <em>master class</em> is read as a phrase, and
+      strictly, so an evening does not start meaning every <em>good evening</em>. The
+      channels are read again at once, and the board says what the change did.</p>
+    <h3>Called off, moved</h3>
+    <p>A meeting called off stays on the board, crossed through; a moved one is marked.
+      The later post that said so is set above the announcement, in the channel&rsquo;s
+      own words.</p>
+    <figure>
+      <img src="./img/reader.jpg" alt="An announcement opened in place: the club, the day large, the date and the hour, the book, three buttons, and the post as it was written.">
+      <figcaption>An announcement, read in place</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">Where it reads from</p>
+    <h2>Only doors that stand open</h2>
+    <p>A public Telegram channel keeps a page that anyone can open without an account.
+      Fama reads that page &mdash; on the phone itself, over whatever network the phone
+      has &mdash; and nothing else. A group&rsquo;s talk has no such page; one message
+      from a public group comes in by its own link.</p>
+    <p>Fama signs in nowhere. A bot sees only the channels whose owners let it in, and
+      needs a server that someone runs, pays for and answers for. An application that
+      signs into a messenger holds the key to every chat on the account. A login form
+      inside someone else&rsquo;s application looks exactly like phishing, however honest
+      the application is. Networks that show their pages only to those who have signed
+      in stay outside; an announcement from there can still be shared in by hand, as
+      text, and it stands on the board like any other.</p>
+    <h3>Many at once, and carried over</h3>
+    <p>Any text that names several channels &mdash; a list pasted from a note, a message,
+      a file &mdash; adds them all with one tap. The whole board travels as one text too:
+      the channels with their tags, the meetings sent by hand, what was taken off, and the
+      colour. Share it to another phone, or keep it in a file.</p>
+    <figure>
+      <img src="./img/channels.jpg" alt="The list of channels: each with its picture, its short name, how many meetings it has ahead, and its tag; a group marked as a group.">
+      <figcaption>The channels, and a group that is told apart</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">The name</p>
+    <h2>Fama, who tells what has happened</h2>
+    <p>Fama is Latin for what is said of a thing: report, rumour, and fame. In Virgil she
+      has as many tongues as feathers and runs through the city telling what has happened,
+      and the painters give her a trumpet. Here she tells only what the channels themselves
+      announce.</p>
+    <p class="quiet">The mark is a herald&rsquo;s trumpet with a banner under it, on
+      Pompeian red. The gold ball on its shaft was once the one lit day on a calendar leaf;
+      the banner is that leaf, cream with a dark band and three quiet dots.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">Words</p>
+    <h2>Read in Russian, spoken in any language</h2>
+    <p>The interface speaks English on its own. Russian travels inside as a module and is
+      taken up by itself on a phone set to Russian. Any other language is a module too
+      &mdash; one text file, filled in any editor and loaded in the settings.</p>
+    <p>The announcements themselves are read in Russian for now: the words for meetings,
+      days, months and places live in a text file beside the code. English announcements,
+      with their hours given in other time zones, are next.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">How it is made</p>
+    <h2>Plain Java, four command-line tools</h2>
+    <p>No Gradle, no Android Studio, no dependency resolution, nothing downloaded at build
+      time. Java compiled against <code>android.jar</code>, packed and signed by hand.
+      Written on a phone, in conversation.</p>
+<pre>aapt package -f -m -J gen -M AndroidManifest.xml -S res -I android.jar
+javac -source 8 -target 8 -classpath android.jar -d cls $(find src gen -name "*.java")
+dalvik-exchange --dex --min-sdk-version=26 --output=classes.dex cls
+zipalign -f 4 base.apk fama.apk &amp;&amp; apksigner sign --ks &lt;key&gt; fama.apk</pre>
+    <p>The decisions are the author&rsquo;s: no server, no sign-in, what counts as an
+      announcement, which doors stay shut. The code, the mark and the words of the
+      interface were written against those decisions by
+      <a href="https://claude.ai">Claude</a>, and read before they shipped. The reading of
+      announcements is tried on a desktop against real posts and invented ones before
+      every build.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="label">Permissions</p>
+    <h2>One</h2>
+    <p><strong>Internet</strong> &mdash; to open the public pages of the channels you
+      added, and their pictures. Nothing else.</p>
+    <p>No account, no server, no telemetry. The board, the list of channels and the
+      journal stay on the phone.</p>
+    <p class="quiet">The APK is signed with one key. Its certificate&rsquo;s SHA-256:<br>
+      <code class="print">CB:58:BA:68:06:24:A2:1D:C0:6C:8A:7E:6B:E8:78:C1:A2:0A:9A:72:27:F3:34:B7:0F:03:A3:79:38:14:AA:33</code></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="https://github.com/Shumtugle/fama">Source</a><span class="sep">/</span>
+    <a href="https://github.com/Shumtugle/fama/releases/latest">Releases</a><span class="sep">/</span>
+    <a href="https://github.com/Shumtugle/fama/blob/main/LICENSE">MIT</a><span class="sep">/</span>
+    <a href="https://claude.ai">Claude</a><span class="sep">/</span>
+    <a href="https://shumtugle.github.io">Shumtugle</a> &middot; Finland
+  </div>
+</footer>
+
+</body>
+</html>

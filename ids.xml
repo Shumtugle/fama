@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Marks a view as a whole scene of the stage, so a scene left behind
+         by an interrupted change can be found and taken away. -->
+    <item name="scene" type="id" />
+</resources>
