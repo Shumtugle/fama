@@ -1,0 +1,488 @@
+# a language for this board
+# fill the empty lines and load the file back
+
+module Русский
+
+# what's on
+board	Афиша
+
+# nothing is announced yet
+empty_title	Пока ничего не объявлено
+
+# share a channel here from the messenger, and whatever it announces will stand on this board by itself
+empty_what	Поделитесь сюда каналом из мессенджера — и всё, что он объявит, само встанет на эту афишу
+
+# no meetings ahead
+quiet_title	Впереди встреч не видно
+
+# the channels are read, and none of them names a day still to come
+quiet_what	Каналы прочитаны: ни один не назвал день, который ещё впереди
+
+# reading the channels for the first time
+first_read	Читаю каналы в первый раз
+
+# ahead: {n}
+ahead_n	Впереди: {n}
+
+# read at {t}
+read_at	прочитано в {t}
+
+# reading {n} of {m}
+reading_n	Читаю {n} из {m}
+
+# today
+today	Сегодня
+
+# tomorrow
+tomorrow	Завтра
+
+# monday
+day_1	Понедельник
+
+# tuesday
+day_2	Вторник
+
+# wednesday
+day_3	Среда
+
+# thursday
+day_4	Четверг
+
+# friday
+day_5	Пятница
+
+# saturday
+day_6	Суббота
+
+# sunday
+day_7	Воскресенье
+
+# january
+month_1	января
+
+# february
+month_2	февраля
+
+# march
+month_3	марта
+
+# april
+month_4	апреля
+
+# may
+month_5	мая
+
+# june
+month_6	июня
+
+# july
+month_7	июля
+
+# august
+month_8	августа
+
+# september
+month_9	сентября
+
+# october
+month_10	октября
+
+# november
+month_11	ноября
+
+# december
+month_12	декабря
+
+# called off
+cancelled	Отменена
+
+# moved
+moved	Перенос
+
+# open the announcement
+open_post	Открыть анонс
+
+# open the channel
+open_channel	Открыть канал
+
+# share
+share	Поделиться
+
+# take off the board
+hide	Убрать с афиши
+
+# taken off the board
+hidden	Убрано с афиши
+
+# the announcement
+post	Анонс
+
+# posted {d}
+posted_on	опубликовано {d}
+
+# to the calendar
+to_calendar	В календарь
+
+# links
+links	Ссылки
+
+# the words of this announcement come with the next reading
+no_words	Текст анонса придёт со следующим чтением
+
+# settings
+settings	Настройки
+
+# channels
+sources	Каналы
+
+# where the board is gathered from; a tag keeps only the posts that carry it
+sources_what	Откуда собирается афиша; тег оставляет только посты с ним
+
+# no channels yet: share one from the messenger
+no_sources	Каналов пока нет — поделитесь каналом из мессенджера
+
+# no tag: every post is weighed
+tag_none	Без тега: все посты
+
+# tag: {t}
+tag_is	Тег: {t}
+
+# noticed by itself: {t}
+tag_learned	Замечен сам: {t}
+
+# a tag, like #announcement
+tag_hint	Тег, например #анонс
+
+# the tag is set
+tag_set	Тег задан
+
+# the tag is taken off
+tag_off	Тег снят
+
+# {n} ahead
+found_n	впереди: {n}
+
+# cannot be read: the channel has no public page
+state_closed	Не читается: у канала нет открытой страницы
+
+# did not answer: check the network or the tunnel
+state_silent	Не ответил: проверьте сеть или туннель
+
+# not read yet
+state_wait	Ещё не прочитан
+
+# a group, not a channel
+state_group	группа, не канал
+
+# a group has no open wall: its announcements come here one by one, shared as links to their messages
+group_hint	Открытой ленты у группы нет: её анонсы приходят сюда по одному — ссылкой на сообщение
+
+# remove
+remove	Убрать
+
+# remove?
+remove_sure	Убрать?
+
+# the channel is removed
+removed	Канал убран
+
+# words
+lexicon	Слова
+
+# what makes a post an announcement, and what turns it away
+lexicon_what	Что делает пост анонсом, а что его отводит
+
+# A word is as large as the number of announcements it found at the last reading. Touch a word to bring it forward; touch it again to change it.
+lexicon_about	Размер слова — сколько анонсов оно нашло при последнем чтении. Коснитесь слова, чтобы поднять его; ещё раз — чтобы изменить.
+
+# they call
+lexicon_calls	Зовут
+
+# they add weight, as the word for a meeting does
+lexicon_calls_what	прибавляют вес, как «встреча»
+
+# they turn away
+lexicon_away	Отводят
+
+# they take weight off: reports of what has already been
+lexicon_away_what	отнимают вес: отчёты о том, что уже было
+
+# add a word
+word_add	Добавить слово
+
+# a word or a phrase: master class
+word_hint	слово или фраза: мастер-класс
+
+# switch on
+word_on	Включить
+
+# switch off
+word_off	Выключить
+
+# take away
+word_remove	Убрать
+
+# the word is taken away; reading again
+word_removed	Слово убрано, каналы перечитываются
+
+# the word is on; reading again
+word_switched_on	Слово включено, каналы перечитываются
+
+# the word is off; reading again
+word_switched_off	Слово выключено, каналы перечитываются
+
+# the word is added; reading again
+word_added	Слово добавлено, каналы перечитываются
+
+# too short: three letters at least
+word_short	Слишком коротко: нужно хотя бы три буквы
+
+# this word is already there
+word_there	Такое слово уже есть
+
+# meetings: +{a}, −{r}
+words_diff	Встреч: +{a}, −{r}
+
+# the board is the same
+words_same	Афиша не изменилась
+
+# colour
+look	Цвет
+
+# one seed, and every colour grows from it
+look_what	Одно семя, и из него растут все цвета
+
+# hue
+hue	Оттенок
+
+# richness
+richness	Насыщенность
+
+# from the wallpaper
+wallpaper	От обоев
+
+# primary
+sw_primary	Основной
+
+# secondary
+sw_secondary	Второй
+
+# tertiary
+sw_tertiary	Третий
+
+# ground
+sw_ground	Фон
+
+# language
+language	Язык
+
+# english lives inside; every other language is a module
+language_what	Английский живёт внутри, любой другой язык — модуль
+
+# english
+english	Английский
+
+# {n} of {m} words
+words_of	{n} из {m} слов
+
+# load a module
+module_load	Загрузить модуль
+
+# save the template
+module_save	Сохранить шаблон
+
+# use english
+use_english	Вернуть английский
+
+# the language is taken
+module_taken	Язык принят
+
+# this is not a language module
+module_bad	Это не языковой модуль
+
+# the template is saved
+module_saved	Шаблон сохранён
+
+# it could not be saved
+unsaved	Сохранить не удалось
+
+# words whose english has changed since the module was made: {n}
+stale	Устарело слов: {n}
+
+# carry over
+carry	Перенос
+
+# channels, meetings sent by hand, what was taken off, and the colour, as one text
+carry_what	Каналы, присланные вручную встречи, убранное и цвет — одним текстом
+
+# Everything the board knows by itself: the channels with their tags, the meetings sent by hand, the meetings taken off, and the colour. Meetings from channels are not carried: the channels will tell them again.
+carry_about	Всё, что афиша знает сама: каналы с тегами, встречи, присланные вручную, убранные встречи и цвет. Встречи из каналов не переносятся — каналы расскажут их заново.
+
+# channels: {c}  ·  by hand: {b}  ·  taken off: {h}
+carry_n	каналов: {c}  ·  вручную: {b}  ·  убрано: {h}
+
+# save to a file
+carry_save	Сохранить в файл
+
+# load from a file
+carry_load	Загрузить из файла
+
+# the board is saved
+carry_saved	Афиша сохранена
+
+# channels not yet on the board come onto it and are read; what is already there stays as it is
+carry_sheet	Каналы, которых ещё нет на афише, встанут на неё и прочитаются; то, что уже есть, останется как есть
+
+# carry over
+carry_take	Перенести
+
+# channels carried over: {c}
+carry_done	Перенесено каналов: {c}
+
+# this file holds neither a carried board nor a channel
+carry_bad	В файле нет ни переноса, ни каналов
+
+# channels in the text: {n}
+many_n	Каналов в тексте: {n}
+
+# already on the board: {n}
+many_there	Уже на афише: {n}
+
+# add them all
+add_all	Добавить все
+
+# about
+about	О приложении
+
+# what the name means, how the board works, what it understands
+about_what	Что значит имя, как устроена афиша, что она понимает
+
+# version {v}  ·  MIT licence
+about_version	версия {v}  ·  лицензия MIT
+
+# the name
+about_name_h	Имя
+
+# Fama is Latin for what is said of a thing: report, rumour, and fame. In Virgil she has as many tongues as feathers and runs through the city telling what has happened, and the painters give her a trumpet. Here she tells only what the channels themselves announce.
+about_name	Fama по-латыни — то, что о чём-то говорят: весть, молва и слава. У Вергилия у неё столько языков, сколько перьев, она бежит по городу и рассказывает, что случилось, а художники дают ей трубу. Здесь она трубит только то, что объявили сами каналы.
+
+# how it works
+about_how_h	Как она работает
+
+# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
+about_how	Сервера и аккаунта нет. Телефон сам открывает публичную страницу каждого канала — через ту сеть, что у него есть, — и взвешивает каждый пост: основа анонса — день, который ещё впереди, а слова-приглашения, тег канала, час, место и название в кавычках добавляют вес. Отменённая встреча зачёркивается, перенесённая помечается. Афиша перечитывает каналы, когда её открывают спустя полчаса, и хранит текст анонса, пока не прошёл его день.
+
+# what it understands
+about_links_h	Что она понимает
+
+# a public channel: read whole, and read again
+link_channel	публичный канал: читается целиком и снова
+
+# the same, by its short name
+link_handle	то же — коротким именем
+
+# one message; from a group, the only way in
+link_message	одно сообщение; у группы это единственный путь
+
+# invitations and closed chats: they have no public page and are not read
+link_closed	приглашения и закрытые чаты: открытой страницы у них нет, не читаются
+
+# a folder: not read whole; its channels one by one
+link_folder	папка: целиком не читается, каналы из неё — по одному
+
+# any text that names several channels: all of them at once
+link_list	любой текст, где названо несколько каналов: все разом
+
+# a carried board: channels, meetings sent by hand, what was taken off, the colour
+link_carry	перенос афиши: каналы, присланное вручную, убранное, цвет
+
+# languages
+about_lang_h	Языки
+
+# The interface speaks English by itself; Russian travels inside as a module and is taken up on a phone set to Russian; any other language is a module filled in by hand, under Settings, Language. Announcements are read in Russian: the words for meetings, days, months and places lie in a file beside the code. English announcements are next.
+about_lang	Интерфейс сам по себе английский; русский едет внутри модулем и включается на русском телефоне; любой другой язык — модуль, заполненный вручную (Настройки → Язык). Анонсы Fama читает по-русски: слова встреч, дней, месяцев и мест лежат файлом рядом с кодом. Английские анонсы — следующие.
+
+# what it does not do
+about_not_h	Чего она не делает
+
+# It signs in nowhere, reads no closed channel and no group's talk, and reads no network that shows its pages only to those who have signed in.
+about_not	Никуда не входит, не читает закрытые каналы и разговоры групп и не читает сети, которые показывают страницы только вошедшим.
+
+# the source
+about_home	Исходный код
+
+# journal
+log	Журнал
+
+# what the application did, to send when something goes wrong
+log_what	Что делало приложение — отправить, если что-то пошло не так
+
+# copy the journal
+log_copy	Скопировать журнал
+
+# the run before
+log_before	предыдущий запуск
+
+# copied
+copied	Скопировано
+
+# reading the channel
+take_reading	Читаю канал
+
+# to the board
+take_add	В афишу
+
+# already on the board
+take_there	Уже в афише
+
+# on the board
+take_added	На афише
+
+# the nearest
+take_next	Ближайшая
+
+# no meetings ahead yet; it will be read again
+take_none	Встреч впереди пока нет — канал будут перечитывать
+
+# a closed channel has no public page; share its announcements one by one
+take_closed	У закрытого канала нет открытой страницы — делитесь его анонсами по одному
+
+# this is a group, not a channel: a group's talk has no open wall. Share its announcements here one by one, as links to their messages
+take_group	Это группа, а не канал: у разговоров группы нет открытой ленты. Анонсы из неё присылайте сюда по одному — ссылкой на сообщение
+
+# this is a group, not a channel, and the message did not read or names no day ahead
+take_group_none	Это группа, а не канал, а сообщение не прочиталось или не называет дня впереди
+
+# a folder is not read whole yet; share its channels one by one
+take_folder	Папку целиком прочитать пока нельзя — поделитесь каналами по одному
+
+# the channel did not answer; check the network or the tunnel
+take_silent	Канал не ответил — проверьте сеть или туннель
+
+# no day ahead is named in this text
+take_no_day	В этом тексте не назван день впереди
+
+# an announcement
+take_note	Анонс
+
+# by hand
+by_hand	Вручную
+
+# close
+close	Закрыть
+
+# add a channel
+add_channel	Добавить канал
+
+# a channel's link or @name
+add_hint	Ссылка или @имя канала
+
+# the channel is added
+added	Канал добавлен
+
+# this is neither a channel's link nor its name
+not_channel	Это не ссылка и не имя канала
+
+# the channel's page did not read just now; it can go on the board, and will be read again
+take_unread	Страница канала сейчас не прочиталась — его можно добавить, афиша перечитает его позже
+

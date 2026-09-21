@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Only what the window shows before the first frame is drawn: the
+         ground of the default seed. Every other colour is grown at run time. -->
+    <color name="ground">#FF160B08</color>
+</resources>

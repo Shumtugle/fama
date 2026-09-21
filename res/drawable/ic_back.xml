@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The cloth: Pompeian red, a little lighter where the light comes from. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#A1301F" android:pathData="M0,0H108V108H0Z" />
+    <path android:fillColor="#BC4630" android:fillAlpha="0.32"
+        android:pathData="M-24.00,22.00a52.00,52.00 0 1,0 104.00,0a52.00,52.00 0 1,0 -104.00,0Z" />
+</vector>

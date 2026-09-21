@@ -1,0 +1,35 @@
+# where the board reads from, and the marks it finds its way through a page by
+# one to a line: a key, a tab, the value
+# {name} stands for a channel's short name, {id} for a post's number
+
+wall	https://t.me/s/{name}
+before	https://t.me/s/{name}?before={id}
+post	https://t.me/{name}/{id}
+channel	https://t.me/{name}
+# one message on its own, as the page for embedding shows it; groups have this and no wall
+single	https://t.me/{name}/{id}?embed=1
+
+# where the application's own source is kept
+home	https://github.com/Shumtugle/fama
+
+# the hosts a shared link may point at
+hosts	t.me telegram.me telegram.dog
+
+# first parts of a link that are not a public channel
+closed	joinchat c
+folder	addlist
+reserved	share proxy socks iv login bg setlanguage addstickers addemoji addtheme confirmphone
+
+# how the board introduces itself to a page, as a phone's browser would
+agent	Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36
+
+# the marks a public page leaves for its own scripts
+mark.post	data-post="
+mark.text	js-message_text
+mark.date	tgme_widget_message_date
+mark.title	tgme_channel_info_header_title
+mark.photo	tgme_page_photo_image
+mark.extra	tgme_page_extra
+
+# words in that line that tell a group, whose talk has no wall, from a channel
+group	members online участник

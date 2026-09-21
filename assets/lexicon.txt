@@ -1,0 +1,76 @@
+# the words announcements are read by
+# one kind to a line: a key, a tab, then the words, parted by spaces
+# a word may be only the start of one: the reading forgives endings and typos
+# words of three letters or fewer are met only whole
+
+# months, as they stand after a number, and as they are cut short
+month.1	января январь янв
+month.2	февраля февраль фев февр
+month.3	марта март мар
+month.4	апреля апрель апр
+month.5	мая май
+month.6	июня июнь июн
+month.7	июля июль июл
+month.8	августа август авг
+month.9	сентября сентябрь сен сент
+month.10	октября октябрь окт
+month.11	ноября ноябрь ноя нояб
+month.12	декабря декабрь дек
+
+# days of the week from monday; only the full forms point at a day by themselves
+day.1	понедельник понедельника понедельнику пн
+day.2	вторник вторника вторнику вт
+day.3	среда среду среды среде ср
+day.4	четверг четверга четвергу чт
+day.5	пятница пятницу пятницы пятнице пт
+day.6	суббота субботу субботы субботе сб
+day.7	воскресенье воскресенья воскресенью вс
+
+# a day of the week a week further on, not this one
+next	следующ
+
+# days counted from the day of the post
+today	сегодня
+tomorrow	завтра
+after	послезавтра
+
+# the ending of an ordinal day, as in the twenty seventh
+ordinal	го е
+
+# words that join two days of one month
+join	и по до
+
+# words standing before an hour
+at	в во с со к до начало начале сбор
+
+# words after a bare hour
+hour	ч час часа часов
+
+# what makes a post an announcement; a word that any post of a club may use
+# (the club itself, books in general) says too little and is left out
+event	встреч заседан обсужд обсуд собира собер собрани читаем чтени дискусс лекци презентац приходит приглаша ждем анонс регистрац записат беседа
+
+# what says where
+place	адрес ул улица пр проспект наб набережная пер переулок пл площадь метро м кафе кофейн библиотек магазин бар лофт пространств музей галере антикафе
+
+# pictures that say where
+pins	📍 📌 🏠 🗺 🏛
+
+# what says a book is meant
+book	роман книга книгу книги повесть повести сборник рассказ пьеса автор произведен
+
+# words before a title that is the place, not the book
+venue	кафе кофейн магазин бар лофт пространств ресторан антикафе клуб библиотек музей галере зал
+
+# what turns a post away: a report of what has already been, not a call to what is coming;
+# each word met only whole, or, marked with a star, as the start of a word;
+# it takes weight off instead of adding it
+away	прошла прошел прошло прошли состоял* итоги фотоотчет*
+# the letters a word's other forms may drop at its end, for words added by hand
+ending	а е и о у ы э ю я ь
+# a meeting called off, or moved
+cancel	отмен отменя
+moved	перенос перенес переносит
+
+# a paid post, marked as the law asks
+advert	реклама рекламный erid

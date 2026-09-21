@@ -1,0 +1,488 @@
+# a language for this board
+# fill the empty lines and load the file back
+
+module untitled
+
+# what's on
+board	
+
+# nothing is announced yet
+empty_title	
+
+# share a channel here from the messenger, and whatever it announces will stand on this board by itself
+empty_what	
+
+# no meetings ahead
+quiet_title	
+
+# the channels are read, and none of them names a day still to come
+quiet_what	
+
+# reading the channels for the first time
+first_read	
+
+# ahead: {n}
+ahead_n	
+
+# read at {t}
+read_at	
+
+# reading {n} of {m}
+reading_n	
+
+# today
+today	
+
+# tomorrow
+tomorrow	
+
+# monday
+day_1	
+
+# tuesday
+day_2	
+
+# wednesday
+day_3	
+
+# thursday
+day_4	
+
+# friday
+day_5	
+
+# saturday
+day_6	
+
+# sunday
+day_7	
+
+# january
+month_1	
+
+# february
+month_2	
+
+# march
+month_3	
+
+# april
+month_4	
+
+# may
+month_5	
+
+# june
+month_6	
+
+# july
+month_7	
+
+# august
+month_8	
+
+# september
+month_9	
+
+# october
+month_10	
+
+# november
+month_11	
+
+# december
+month_12	
+
+# called off
+cancelled	
+
+# moved
+moved	
+
+# open the announcement
+open_post	
+
+# open the channel
+open_channel	
+
+# share
+share	
+
+# take off the board
+hide	
+
+# taken off the board
+hidden	
+
+# the announcement
+post	
+
+# posted {d}
+posted_on	
+
+# to the calendar
+to_calendar	
+
+# links
+links	
+
+# the words of this announcement come with the next reading
+no_words	
+
+# settings
+settings	
+
+# channels
+sources	
+
+# where the board is gathered from; a tag keeps only the posts that carry it
+sources_what	
+
+# no channels yet: share one from the messenger
+no_sources	
+
+# no tag: every post is weighed
+tag_none	
+
+# tag: {t}
+tag_is	
+
+# noticed by itself: {t}
+tag_learned	
+
+# a tag, like #announcement
+tag_hint	
+
+# the tag is set
+tag_set	
+
+# the tag is taken off
+tag_off	
+
+# {n} ahead
+found_n	
+
+# cannot be read: the channel has no public page
+state_closed	
+
+# did not answer: check the network or the tunnel
+state_silent	
+
+# not read yet
+state_wait	
+
+# a group, not a channel
+state_group	
+
+# a group has no open wall: its announcements come here one by one, shared as links to their messages
+group_hint	
+
+# remove
+remove	
+
+# remove?
+remove_sure	
+
+# the channel is removed
+removed	
+
+# words
+lexicon	
+
+# what makes a post an announcement, and what turns it away
+lexicon_what	
+
+# A word is as large as the number of announcements it found at the last reading. Touch a word to bring it forward; touch it again to change it.
+lexicon_about	
+
+# they call
+lexicon_calls	
+
+# they add weight, as the word for a meeting does
+lexicon_calls_what	
+
+# they turn away
+lexicon_away	
+
+# they take weight off: reports of what has already been
+lexicon_away_what	
+
+# add a word
+word_add	
+
+# a word or a phrase: master class
+word_hint	
+
+# switch on
+word_on	
+
+# switch off
+word_off	
+
+# take away
+word_remove	
+
+# the word is taken away; reading again
+word_removed	
+
+# the word is on; reading again
+word_switched_on	
+
+# the word is off; reading again
+word_switched_off	
+
+# the word is added; reading again
+word_added	
+
+# too short: three letters at least
+word_short	
+
+# this word is already there
+word_there	
+
+# meetings: +{a}, −{r}
+words_diff	
+
+# the board is the same
+words_same	
+
+# colour
+look	
+
+# one seed, and every colour grows from it
+look_what	
+
+# hue
+hue	
+
+# richness
+richness	
+
+# from the wallpaper
+wallpaper	
+
+# primary
+sw_primary	
+
+# secondary
+sw_secondary	
+
+# tertiary
+sw_tertiary	
+
+# ground
+sw_ground	
+
+# language
+language	
+
+# english lives inside; every other language is a module
+language_what	
+
+# english
+english	
+
+# {n} of {m} words
+words_of	
+
+# load a module
+module_load	
+
+# save the template
+module_save	
+
+# use english
+use_english	
+
+# the language is taken
+module_taken	
+
+# this is not a language module
+module_bad	
+
+# the template is saved
+module_saved	
+
+# it could not be saved
+unsaved	
+
+# words whose english has changed since the module was made: {n}
+stale	
+
+# carry over
+carry	
+
+# channels, meetings sent by hand, what was taken off, and the colour, as one text
+carry_what	
+
+# Everything the board knows by itself: the channels with their tags, the meetings sent by hand, the meetings taken off, and the colour. Meetings from channels are not carried: the channels will tell them again.
+carry_about	
+
+# channels: {c}  ·  by hand: {b}  ·  taken off: {h}
+carry_n	
+
+# save to a file
+carry_save	
+
+# load from a file
+carry_load	
+
+# the board is saved
+carry_saved	
+
+# channels not yet on the board come onto it and are read; what is already there stays as it is
+carry_sheet	
+
+# carry over
+carry_take	
+
+# channels carried over: {c}
+carry_done	
+
+# this file holds neither a carried board nor a channel
+carry_bad	
+
+# channels in the text: {n}
+many_n	
+
+# already on the board: {n}
+many_there	
+
+# add them all
+add_all	
+
+# about
+about	
+
+# what the name means, how the board works, what it understands
+about_what	
+
+# version {v}  ·  MIT licence
+about_version	
+
+# the name
+about_name_h	
+
+# Fama is Latin for what is said of a thing: report, rumour, and fame. In Virgil she has as many tongues as feathers and runs through the city telling what has happened, and the painters give her a trumpet. Here she tells only what the channels themselves announce.
+about_name	
+
+# how it works
+about_how_h	
+
+# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
+about_how	
+
+# what it understands
+about_links_h	
+
+# a public channel: read whole, and read again
+link_channel	
+
+# the same, by its short name
+link_handle	
+
+# one message; from a group, the only way in
+link_message	
+
+# invitations and closed chats: they have no public page and are not read
+link_closed	
+
+# a folder: not read whole; its channels one by one
+link_folder	
+
+# any text that names several channels: all of them at once
+link_list	
+
+# a carried board: channels, meetings sent by hand, what was taken off, the colour
+link_carry	
+
+# languages
+about_lang_h	
+
+# The interface speaks English by itself; Russian travels inside as a module and is taken up on a phone set to Russian; any other language is a module filled in by hand, under Settings, Language. Announcements are read in Russian: the words for meetings, days, months and places lie in a file beside the code. English announcements are next.
+about_lang	
+
+# what it does not do
+about_not_h	
+
+# It signs in nowhere, reads no closed channel and no group's talk, and reads no network that shows its pages only to those who have signed in.
+about_not	
+
+# the source
+about_home	
+
+# journal
+log	
+
+# what the application did, to send when something goes wrong
+log_what	
+
+# copy the journal
+log_copy	
+
+# the run before
+log_before	
+
+# copied
+copied	
+
+# reading the channel
+take_reading	
+
+# to the board
+take_add	
+
+# already on the board
+take_there	
+
+# on the board
+take_added	
+
+# the nearest
+take_next	
+
+# no meetings ahead yet; it will be read again
+take_none	
+
+# a closed channel has no public page; share its announcements one by one
+take_closed	
+
+# a folder is not read whole yet; share its channels one by one
+take_folder	
+
+# this is a group, not a channel: a group's talk has no open wall. Share its announcements here one by one, as links to their messages
+take_group	
+
+# this is a group, not a channel, and the message did not read or names no day ahead
+take_group_none	
+
+# the channel did not answer; check the network or the tunnel
+take_silent	
+
+# no day ahead is named in this text
+take_no_day	
+
+# an announcement
+take_note	
+
+# by hand
+by_hand	
+
+# close
+close	
+
+# add a channel
+add_channel	
+
+# a channel's link or @name
+add_hint	
+
+# the channel is added
+added	
+
+# this is neither a channel's link nor its name
+not_channel	
+
+# the channel's page did not read just now; it can go on the board, and will be read again
+take_unread	
+
