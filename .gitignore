@@ -9,3 +9,7 @@ build/
 out/
 *.apk
 *.idsig
+
+# a board handed out ready is built from a list kept outside the tree
+assets/preset.txt
+presets/

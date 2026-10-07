@@ -497,7 +497,7 @@ public final class Take extends Activity {
         said.addView(day);
         if (b.book.length() > 0) {
             TextView book = Letter.serif(Letter.set(new TextView(this), Letter.BODY_L));
-            book.setText("\u00AB" + b.book + "\u00BB");
+            book.setText(Main.bookSaid(b));
             book.setTextColor(Tone.of(Tone.ON_SURFACE));
             book.setMaxLines(2);
             LinearLayout.LayoutParams p = wide();

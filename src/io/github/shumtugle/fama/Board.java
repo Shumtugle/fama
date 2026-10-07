@@ -155,6 +155,15 @@ final class Board {
         if (one.note.length() > 0) {
             o.put("note", one.note);
         }
+        if (one.rough) {
+            o.put("rough", true);
+        }
+        if (one.pending) {
+            o.put("pending", true);
+        }
+        if (one.loose) {
+            o.put("loose", true);
+        }
         if (!one.links.isEmpty()) {
             JSONArray ls = new JSONArray();
             for (int k = 0; k < one.links.size(); k++) {
@@ -184,6 +193,9 @@ final class Board {
         one.weight = o.optInt("weight");
         one.text = o.optString("text");
         one.note = o.optString("note");
+        one.rough = o.optBoolean("rough");
+        one.pending = o.optBoolean("pending");
+        one.loose = o.optBoolean("loose");
         JSONArray ls = o.optJSONArray("links");
         for (int k = 0; ls != null && k < ls.length(); k++) {
             JSONArray pair = ls.optJSONArray(k);

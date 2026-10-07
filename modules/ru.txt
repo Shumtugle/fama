@@ -99,6 +99,12 @@ cancelled	Отменена
 # moved
 moved	Перенос
 
+# roughly
+rough	Примерно
+
+# details to come
+pending	Подробности позже
+
 # open the announcement
 open_post	Открыть анонс
 
@@ -369,8 +375,8 @@ about_name	Fama по-латыни — то, что о чём-то говорят
 # how it works
 about_how_h	Как она работает
 
-# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
-about_how	Сервера и аккаунта нет. Телефон сам открывает публичную страницу каждого канала — через ту сеть, что у него есть, — и взвешивает каждый пост: основа анонса — день, который ещё впереди, а слова-приглашения, тег канала, час, место и название в кавычках добавляют вес. Отменённая встреча зачёркивается, перенесённая помечается. Афиша перечитывает каналы, когда её открывают спустя полчаса, и хранит текст анонса, пока не прошёл его день.
+# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked, and one said only roughly, or with its place still to come, says so. A meeting told over several posts is one card. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
+about_how	Сервера и аккаунта нет. Телефон сам открывает публичную страницу каждого канала — через ту сеть, что у него есть, — и взвешивает каждый пост: основа анонса — день, который ещё впереди, а слова-приглашения, тег канала, час, место и название в кавычках добавляют вес. Отменённая встреча зачёркивается, перенесённая помечается, а объявленная примерно или с местом «напишем позже» так и подписана. Встреча, которую клуб объявляет в несколько постов, — одна карточка. Афиша перечитывает каналы, когда её открывают спустя полчаса, и хранит текст анонса, пока не прошёл его день.
 
 # what it understands
 about_links_h	Что она понимает
@@ -392,6 +398,9 @@ link_folder	папка: целиком не читается, каналы из 
 
 # any text that names several channels: all of them at once
 link_list	любой текст, где названо несколько каналов: все разом
+
+# the words of an announcement, shared or pasted whole: weighed and kept by hand
+link_said	Слова анонса, присланные или вставленные целиком: взвешиваются и остаются в афише вручную
 
 # a carried board: channels, meetings sent by hand, what was taken off, the colour
 link_carry	перенос афиши: каналы, присланное вручную, убранное, цвет
@@ -474,8 +483,8 @@ close	Закрыть
 # add a channel
 add_channel	Добавить канал
 
-# a channel's link or @name
-add_hint	Ссылка или @имя канала
+# a channel's link or @name, or an announcement pasted whole
+add_hint	Ссылка или @имя канала, или текст анонса
 
 # the channel is added
 added	Канал добавлен

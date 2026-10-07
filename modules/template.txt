@@ -99,6 +99,12 @@ cancelled
 # moved
 moved	
 
+# roughly
+rough	
+
+# details to come
+pending	
+
 # open the announcement
 open_post	
 
@@ -369,7 +375,7 @@ about_name
 # how it works
 about_how_h	
 
-# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
+# There is no server and no account. The phone itself opens the public page of each channel, over whatever network it has, and weighs every post: a day still ahead is the spine of an announcement, and words that call people together, the channel's tag, an hour, a place and a title in quotes add their weight. A meeting called off is crossed out, a moved one is marked, and one said only roughly, or with its place still to come, says so. A meeting told over several posts is one card. The board reads the channels again when it is opened after half an hour, and keeps an announcement's words only until its day has passed.
 about_how	
 
 # what it understands
@@ -392,6 +398,9 @@ link_folder
 
 # any text that names several channels: all of them at once
 link_list	
+
+# the words of an announcement, shared or pasted whole: weighed and kept by hand
+link_said	
 
 # a carried board: channels, meetings sent by hand, what was taken off, the colour
 link_carry	
@@ -474,7 +483,7 @@ close
 # add a channel
 add_channel	
 
-# a channel's link or @name
+# a channel's link or @name, or an announcement pasted whole
 add_hint	
 
 # the channel is added

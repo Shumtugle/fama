@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,6 +59,10 @@ final class Crier {
     private static final int MOST_BYTES = 4 * 1024 * 1024;
     /** A last page that reaches back fewer days than this asks for the page before it. */
     private static final int BUSY_DAYS = 14;
+    /** The shortest and the longest wait between two channels of one round. */
+    private static final long BREATH = 1500L;
+    private static final long LONGER = 4500L;
+    private static final java.util.Random LOTS = new java.util.Random();
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static volatile boolean busy;
     private static Heard heard;
@@ -75,7 +80,17 @@ final class Crier {
 
     // ------------------------------------------------------------------ the round
 
-    /** Goes round the channels named, or all of them, unless a round is already under way. */
+    /**
+     * Goes round the channels named, or all of them, unless a round is already
+     * under way.
+     *
+     * The round is not a clock. The channels are taken in a shuffled order and
+     * a breath is drawn between them, of a length that is never twice the
+     * same, so that a reading looks like what it is — someone reading — and
+     * not like a machine walking down a list at a fixed pace. One channel
+     * asked for by itself is read at once, with nothing to shuffle and no one
+     * to wait for.
+     */
     static void round(final Context context, final List<String> only) {
         if (busy) {
             return;
@@ -91,12 +106,16 @@ final class Crier {
         if (list.isEmpty()) {
             return;
         }
+        Collections.shuffle(list, LOTS);
         busy = true;
         tell(0, list.size(), null, false);
         new Thread(new Runnable() {
             public void run() {
                 int opened = 0;
                 for (int i = 0; i < list.size(); i++) {
+                    if (i > 0) {
+                        breath();
+                    }
                     Board.Source s = list.get(i);
                     Reading r = safely(s.name, s.tag);
                     Board.Source now = Board.source(app, s.name);
@@ -161,6 +180,15 @@ final class Crier {
     }
 
     // ------------------------------------------------------------------ one channel
+
+    /** The wait between two channels: never nothing, never the same twice. */
+    private static void breath() {
+        try {
+            Thread.sleep(BREATH + (long) (LOTS.nextDouble() * LONGER));
+        } catch (InterruptedException cut) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     /**
      * One channel read so that nothing on its page can bring the application

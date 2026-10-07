@@ -26,6 +26,11 @@ import java.util.List;
  *
  * Taking a carried board in adds to the one already there and takes
  * nothing away: a channel already on it keeps what it has.
+ *
+ * A board can also be handed out ready. A package built with a carried
+ * board inside it, or with any text that names channels, takes it up the
+ * first time it opens, and again only when the text inside it changes; a
+ * channel taken off by hand in between does not come back until then.
  */
 final class Carry {
 
@@ -161,6 +166,58 @@ final class Carry {
         Trace.note("carry: taken in, " + taken.channels.size() + " channels, " + taken.bills
             + " kept by hand, " + taken.hidden + " taken off");
         return taken;
+    }
+
+    /** The name of the board a package may carry inside it. */
+    static final String PRESET = "preset.txt";
+
+    /**
+     * What a text handed out with the package holds: a carried board as it
+     * is, or, for any other text, the channels it names.
+     */
+    static Load preset(String text) {
+        if (is(text)) {
+            return read(text);
+        }
+        Load load = new Load();
+        ArrayList<String> named = Ways.channels(text);
+        for (int i = 0; i < named.size(); i++) {
+            Board.Source s = new Board.Source();
+            s.name = named.get(i);
+            s.state = Board.WAIT;
+            load.sources.add(s);
+        }
+        return load;
+    }
+
+    /**
+     * The board inside the package taken up, if there is one and it is not
+     * the one taken up before. What was taken is known by the text itself,
+     * so a package with a new list adds the new channels, once.
+     */
+    static void takePreset(Context context) {
+        String text;
+        try {
+            java.io.InputStream in = context.getAssets().open(PRESET);
+            java.io.ByteArrayOutputStream all = new java.io.ByteArrayOutputStream();
+            byte[] chunk = new byte[4096];
+            int got;
+            while ((got = in.read(chunk)) > 0) {
+                all.write(chunk, 0, got);
+            }
+            in.close();
+            text = all.toString("UTF-8");
+        } catch (java.io.IOException none) {
+            return;
+        }
+        String token = Integer.toHexString(text.hashCode()) + "." + text.length();
+        if (token.equals(Keep.preset(context))) {
+            return;
+        }
+        Taken taken = apply(context, preset(text));
+        Keep.savePreset(context, token);
+        Trace.note("carry: the board inside the package taken up, " + taken.channels.size()
+            + " channels new");
     }
 
     /** What a carry brought that was not here before. */

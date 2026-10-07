@@ -86,6 +86,12 @@ final class Sift {
         ArrayList<String[]> links = new ArrayList<String[]>();
         /** A later post's words that called the meeting off or moved it. */
         String note = "";
+        /** Said only roughly: an approximate day or place, which a firm telling outranks. */
+        boolean rough;
+        /** A detail promised for later — the place, the hour — and not yet told. */
+        boolean pending;
+        /** The book is the post's own words about whom is read, not a title in quotes. */
+        boolean loose;
 
         /** The same meeting read twice is known by this. */
         String key() {
@@ -180,11 +186,22 @@ final class Sift {
     static boolean away(List<String> words) {
         List<String> turning = Lex.of(Lex.AWAY);
         for (int i = 0; i < words.size(); i++) {
-            if (Lex.whole(words.get(i), turning) >= 0) {
+            if (Lex.whole(words.get(i), turning) >= 0 && !turnedBack(words, i)) {
                 return true;
             }
         }
         return Lex.ownAny(Lex.AWAY, words);
+    }
+
+    /**
+     * Whether a report word is turned back to what is coming by the word
+     * beside it: totals to be drawn at the next meeting are not a report of
+     * the last one.
+     */
+    static boolean turnedBack(List<String> words, int i) {
+        List<String> back = Lex.of("unaway");
+        return (i > 0 && Lex.whole(words.get(i - 1), back) >= 0)
+            || (i + 1 < words.size() && Lex.whole(words.get(i + 1), back) >= 0);
     }
 
     /** Which words that call, and which that turn away, a post holds: counted once each. */
@@ -209,7 +226,7 @@ final class Sift {
         HashSet<String> once = new HashSet<String>();
         for (int i = 0; i < words.size(); i++) {
             int k = Lex.whole(words.get(i), turning);
-            if (k >= 0 && once.add(turning.get(k))) {
+            if (k >= 0 && !turnedBack(words, i) && once.add(turning.get(k))) {
                 tally.add(Lex.AWAY, turning.get(k), words.get(i), 1);
             }
         }
@@ -294,8 +311,11 @@ final class Sift {
         }
 
         String[] rows = text.split("\n", -1);
-        boolean calls = calls(words);
+        int[] promise = promise(text);
+        boolean calls = calls(promise == null ? words
+            : Near.words(text.substring(0, promise[0]) + " " + text.substring(promise[1])));
         boolean past = away(words);
+        boolean rough = rough(text, when.days);
         String place = place(rows);
         ArrayList<Title> titles = titles(text);
         int weight = DAY + (calls ? CALL : 0) + (tagged ? TAG : 0)
@@ -314,6 +334,7 @@ final class Sift {
         boolean off = said(words, "cancel");
         boolean moved = said(words, "moved");
         String gist = gist(rows);
+        String reads = list ? "" : reads(rows);
         for (int i = 0; i < ahead.size(); i++) {
             Days.Day d = ahead.get(i);
             Bill b = new Bill();
@@ -326,6 +347,8 @@ final class Sift {
             b.place = place;
             b.text = keep(text, TEXT_MOST);
             b.links = post.links;
+            b.rough = rough;
+            b.pending = promise != null;
             if (list) {
                 String row = d.line < rows.length ? rows[d.line] : "";
                 List<String> rowWords = Near.words(row);
@@ -338,6 +361,10 @@ final class Sift {
                 b.moved = moved;
                 b.book = best(titles, text);
                 b.line = gist;
+                if (b.book.length() == 0 && reads.length() > 0) {
+                    b.book = reads;
+                    b.loose = true;
+                }
             }
             if (b.line.equals(b.place)) {
                 b.place = "";
@@ -425,10 +452,13 @@ final class Sift {
 
     /**
      * Where the meeting is. A line with a pin is the place, whole. Failing
-     * that, the first word for a street, a door or a room, and what follows
-     * it: with the small word before it, so that it reads as said, and up
-     * to the end of its line — or, when a name in quotes comes straight
-     * after it, up to the end of that name.
+     * that, the lines are searched for a word for a street, a door or a room,
+     * and a place with a name — a capital, a number, a name in quotes — is
+     * taken before a bare one: "in the park" is a kind of place, "the
+     * Old Garden" is a place. Failing a word, a name entered after a word
+     * for meeting stands for the place: "we meet at Harbour Hall". A
+     * line that opens with a spare plan — if it rains, then elsewhere — is
+     * heard last, and only when nothing else is said.
      */
     static String place(String[] rows) {
         List<String> pins = Lex.of("pins");
@@ -442,39 +472,473 @@ final class Sift {
                 }
             }
         }
-        List<String> places = Lex.of("place");
+        String bare = "";
+        String spareNamed = "";
+        String spareBare = "";
         for (int i = 0; i < rows.length; i++) {
-            String row = Near.mend(rows[i]);
-            Matcher word = WORDS.matcher(row);
-            int previous = -1;
-            String previousWord = "";
-            int count = 0;
-            while (word.find()) {
-                String plain = Near.norm(word.group());
-                count++;
-                if (plain.length() > 0 && Near.starts(plain, places) >= 0) {
-                    int from = word.start();
-                    if (previous >= 0 && previousWord.length() <= 2) {
-                        from = previous;
+            String found = placeOn(rows, i);
+            if (found.length() == 0) {
+                continue;
+            }
+            boolean spare = spare(rows[i]);
+            if (named(found)) {
+                if (!spare) {
+                    return found;
+                }
+                if (spareNamed.length() == 0) {
+                    spareNamed = found;
+                }
+            } else if (!spare && bare.length() == 0) {
+                bare = found;
+            } else if (spare && spareBare.length() == 0) {
+                spareBare = found;
+            }
+        }
+        for (int i = 0; i < rows.length; i++) {
+            if (!spare(rows[i])) {
+                String entered = entered(Near.mend(rows[i]));
+                if (entered.length() > 0) {
+                    return entered;
+                }
+            }
+        }
+        if (bare.length() > 0) {
+            return bare;
+        }
+        return spareNamed.length() > 0 ? spareNamed : spareBare;
+    }
+
+    /**
+     * The place a line names by a word for one: with the small word before
+     * it and a name before it, so that it reads as said ("in the Old
+     * Garden"), up to the end of its sentence — or of the name in quotes
+     * that comes straight after it. A word inside quotes is a title's, not
+     * a place's. A place with no number in it borrows the next line when
+     * that line is an address.
+     */
+    private static String placeOn(String[] rows, int i) {
+        List<String> places = Lex.of("place");
+        String row = Near.mend(rows[i]);
+        Matcher word = WORDS.matcher(row);
+        int previous = -1;
+        int before = -1;
+        String previousWord = "";
+        String beforeWord = "";
+        boolean previousCapital = false;
+        int count = 0;
+        while (word.find()) {
+            String plain = Near.norm(word.group());
+            count++;
+            if (plain.length() > 0 && Near.starts(plain, places) >= 0 && !quoted(row, word.start())) {
+                int from = word.start();
+                if (previous >= 0 && previousWord.length() <= 2) {
+                    from = previous;
+                } else if (previous >= 0 && previousCapital) {
+                    from = before >= 0 && beforeWord.length() <= 2 && beforeWord.length() > 0
+                        && Character.isLowerCase(row.charAt(before)) ? before : previous;
+                }
+                if (count <= 2) {
+                    from = 0;
+                }
+                String rest = row.substring(from);
+                rest = rest.substring(0, sentenceEnd(rest, word.end() - from));
+                int opened = rest.indexOf('\u00AB');
+                int shut = rest.indexOf('\u00BB');
+                int gap = opened < 0 ? -1 : rest.substring(Math.min(word.end() - from, rest.length()),
+                    Math.max(Math.min(word.end() - from, rest.length()), opened)).trim().length();
+                if (opened > 0 && shut > opened && gap == 0) {
+                    rest = rest.substring(0, shut + 1);
+                }
+                String said = tail(clean(rest, 70));
+                if (said.length() > 2 && !promised(said)) {
+                    if (!said.matches(".*\\d.*") && i + 1 < rows.length) {
+                        String next = tail(clean(rows[i + 1], 60));
+                        if (next.matches(".*\\d.*") && !spare(next) && holdsPlaceWord(next)
+                            && next.length() < 60) {
+                            said = said + ", " + next;
+                        }
                     }
-                    if (count <= 2) {
-                        from = 0;
-                    }
-                    String rest = row.substring(from);
-                    int opened = rest.indexOf('\u00AB');
-                    int shut = rest.indexOf('\u00BB');
-                    int gap = opened < 0 ? -1 : rest.substring(word.end() - from,
-                        Math.max(word.end() - from, opened)).trim().length();
-                    if (opened > 0 && shut > opened && gap == 0) {
-                        rest = rest.substring(0, shut + 1);
-                    }
-                    String said = clean(rest, 70);
-                    if (said.length() > 2) {
-                        return said;
+                    return said;
+                }
+            }
+            before = previous;
+            beforeWord = previousWord;
+            previous = word.start();
+            previousWord = plain;
+            previousCapital = Character.isUpperCase(row.codePointAt(word.start()));
+        }
+        return "";
+    }
+
+    /**
+     * A name entered after a word that calls people together: the small
+     * word of entering, then words that begin with a capital — "meet at Harbour
+     * Hall and discuss" gives "at Harbour Hall". One word without a
+     * capital may close the name when the sentence ends on it.
+     */
+    static String entered(String row) {
+        List<String> into = Lex.of("into");
+        List<String> calling = Lex.of(Lex.CALL);
+        Matcher m = WORDS.matcher(row);
+        ArrayList<int[]> at = new ArrayList<int[]>();
+        while (m.find()) {
+            at.add(new int[] {m.start(), m.end()});
+        }
+        for (int k = 1; k + 1 < at.size(); k++) {
+            String small = Near.norm(row.substring(at.get(k)[0], at.get(k)[1]));
+            if (!into.contains(small)) {
+                continue;
+            }
+            /* The word that calls may stand further back, past the day and the hour said before the place. */
+            boolean called = false;
+            for (int back = k - 1; back >= 0 && back >= k - 8 && !called; back--) {
+                String w = Near.norm(row.substring(at.get(back)[0], at.get(back)[1]));
+                if (w.matches("\\d+") || calendarWord(w) || into.contains(w)) {
+                    continue;
+                }
+                called = Near.which(w, calling) >= 0;
+                if (!called) {
+                    break;
+                }
+            }
+            if (!called || !capital(row, at.get(k + 1)[0])) {
+                continue;
+            }
+            int last = -1;
+            for (int j = k + 1; j < at.size() && j <= k + 5; j++) {
+                String between = row.substring(at.get(j - 1)[1], at.get(j)[0]);
+                if (j > k + 1 && !between.matches("[\\s.\u00AB\u00BB\"']+")) {
+                    break;
+                }
+                String plain = Near.norm(row.substring(at.get(j)[0], at.get(j)[1]));
+                if (capital(row, at.get(j)[0]) && !calendarWord(plain)) {
+                    last = j;
+                    continue;
+                }
+                String after = row.substring(at.get(j)[1]);
+                if (last > k && plain.length() > 2 && after.matches("^\\s*([.,;:!?)\u00BB\"\u2014\u2013-].*)?$")) {
+                    last = j;
+                }
+                break;
+            }
+            if (last > k) {
+                int end = at.get(last)[1];
+                if (end < row.length() && "\u00BB\"".indexOf(row.charAt(end)) >= 0) {
+                    end++;
+                }
+                String said = tail(clean(row.substring(at.get(k)[0], end), 70));
+                if (said.length() > 3) {
+                    return said;
+                }
+            }
+        }
+        return "";
+    }
+
+    /** Whether a found place has a name in it, not only a word for a kind of place. */
+    private static boolean named(String place) {
+        if (place.matches(".*[\\d\u00AB\"\u201C\u201E].*")) {
+            return true;
+        }
+        List<String> places = Lex.of("place");
+        Matcher m = WORDS.matcher(place);
+        while (m.find()) {
+            if (capital(place, m.start()) && Near.starts(Near.norm(m.group()), places) < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean holdsPlaceWord(String row) {
+        List<String> places = Lex.of("place");
+        List<String> words = Near.words(row);
+        for (int i = 0; i < words.size(); i++) {
+            if (Near.starts(words.get(i), places) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether a line opens with a spare plan: its first two words hold one. */
+    static boolean spare(String row) {
+        List<String> words = Near.words(row);
+        List<String> spare = Lex.of("spare");
+        for (int i = 0; i < words.size() && i < 2; i++) {
+            if (Lex.whole(words.get(i), spare) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Whether a spot in a line stands inside quotes. */
+    private static boolean quoted(String row, int at) {
+        int opened = 0;
+        int straight = 0;
+        for (int i = 0; i < at; i++) {
+            char c = row.charAt(i);
+            if (c == '\u00AB' || c == '\u201E') {
+                opened++;
+            } else if ((c == '\u00BB' || c == '\u201C') && opened > 0) {
+                opened--;
+            } else if (c == '"') {
+                straight++;
+            }
+        }
+        return opened > 0 || straight % 2 == 1;
+    }
+
+    /**
+     * Where a place's sentence ends, looked for after its word: at a bracket,
+     * a dash between spaces, or a full stop, a mark of exclamation or of
+     * question followed by a space — but not the stop of a short form, a
+     * street or a house or an initial.
+     */
+    private static int sentenceEnd(String rest, int after) {
+        List<String> shortForms = Lex.of("abbrev");
+        int end = Math.min(rest.length(), whenStarts(rest, after));
+        for (int i = Math.max(0, Math.min(after, rest.length())); i < end; i++) {
+            char c = rest.charAt(i);
+            boolean spaced = i + 1 < rest.length() && Character.isWhitespace(rest.charAt(i + 1));
+            if (c == '(') {
+                return i;
+            }
+            if ((c == '\u2014' || c == '\u2013' || c == '-') && i > 0
+                && Character.isWhitespace(rest.charAt(i - 1)) && spaced) {
+                return i;
+            }
+            if ((c == '!' || c == '?' || c == '\u2026') && (spaced || i + 1 == rest.length())) {
+                return i;
+            }
+            if (c == '.' && (spaced || i + 1 == rest.length())) {
+                int w = i;
+                while (w > 0 && Character.isLetter(rest.charAt(w - 1))) {
+                    w--;
+                }
+                String shortened = Near.norm(rest.substring(w, i));
+                if (!(shortened.length() == 1 || shortForms.contains(shortened))) {
+                    return i;
+                }
+            }
+        }
+        return end;
+    }
+
+    /**
+     * Where the day or the hour begins after a place, if it follows it on the
+     * same line: a number before a month written small, a number before the
+     * colon or the stop of an hour, or a word for a day of the week — with
+     * the small word that leads into it. A street named after a date keeps
+     * its capital and is not cut.
+     */
+    private static int whenStarts(String rest, int after) {
+        Matcher m = WORDS.matcher(rest);
+        ArrayList<int[]> at = new ArrayList<int[]>();
+        while (m.find()) {
+            at.add(new int[] {m.start(), m.end()});
+        }
+        List<String> into = Lex.of("into");
+        List<String> leading = Lex.of("at");
+        for (int k = 0; k < at.size(); k++) {
+            if (at.get(k)[0] < after) {
+                continue;
+            }
+            String w = rest.substring(at.get(k)[0], at.get(k)[1]);
+            boolean when = false;
+            if (w.matches("\\d{1,2}")) {
+                int e = at.get(k)[1];
+                boolean hour = e + 2 < rest.length() && (rest.charAt(e) == ':' || rest.charAt(e) == '.')
+                    && Character.isDigit(rest.charAt(e + 1)) && Character.isDigit(rest.charAt(e + 2));
+                boolean dated = k + 1 < at.size() && !capital(rest, at.get(k + 1)[0])
+                    && month(Near.norm(rest.substring(at.get(k + 1)[0], at.get(k + 1)[1])));
+                when = hour || dated;
+            } else if (!capital(rest, at.get(k)[0]) && calendarWord(Near.norm(w))) {
+                when = true;
+            }
+            if (when) {
+                int cut = at.get(k)[0];
+                if (k > 0 && at.get(k - 1)[0] >= after) {
+                    String small = Near.norm(rest.substring(at.get(k - 1)[0], at.get(k - 1)[1]));
+                    if (into.contains(small) || leading.contains(small)) {
+                        cut = at.get(k - 1)[0];
                     }
                 }
-                previous = word.start();
-                previousWord = plain;
+                return cut;
+            }
+        }
+        return rest.length();
+    }
+
+    private static boolean month(String plain) {
+        for (int m = 1; m <= 12; m++) {
+            if (Near.starts(plain, Lex.of("month." + m)) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** A place's end without the pictures and marks left hanging after it. */
+    private static String tail(String said) {
+        String t = said;
+        while (t.length() > 0) {
+            char c = t.charAt(t.length() - 1);
+            boolean closing = c == '\u00BB' || c == '"' || c == '\u201C'
+                || (c == ')' && t.indexOf('(') >= 0);
+            if (Character.isLetterOrDigit(c) || closing) {
+                break;
+            }
+            t = t.substring(0, t.length() - 1);
+        }
+        return t.trim();
+    }
+
+    private static boolean capital(String text, int at) {
+        return at < text.length() && Character.isUpperCase(text.codePointAt(at));
+    }
+
+    /** Whether a plain word is a month, a day of the week, or a day counted from the post. */
+    private static boolean calendarWord(String plain) {
+        for (int m = 1; m <= 12; m++) {
+            if (Near.starts(plain, Lex.of("month." + m)) >= 0) {
+                return true;
+            }
+        }
+        for (int d = 1; d <= 7; d++) {
+            if (Near.starts(plain, Lex.of("day." + d)) >= 0) {
+                return true;
+            }
+        }
+        return Lex.is("today", plain) || Lex.is("tomorrow", plain) || Lex.is("after", plain);
+    }
+
+    // ------------------------------------------------------------------ not yet settled
+
+    /**
+     * Where a post promises a detail for later — the place, the hour — as a
+     * span of the text: from the word for the detail to the word after the
+     * promise, or the other way round, so long as they stand within three
+     * words of each other. What stands in that span talks about the meeting
+     * and calls no one to it: "we shall write where the meeting is" is not
+     * a meeting today. Nothing when no detail is promised.
+     */
+    static int[] promise(String text) {
+        List<String> later = Lex.of("later");
+        List<String> detail = Lex.of("detail");
+        Matcher m = WORDS.matcher(text);
+        ArrayList<int[]> at = new ArrayList<int[]>();
+        ArrayList<String> plain = new ArrayList<String>();
+        while (m.find()) {
+            at.add(new int[] {m.start(), m.end()});
+            plain.add(Near.norm(m.group()));
+        }
+        for (int i = 0; i < plain.size(); i++) {
+            if (Lex.whole(plain.get(i), later) < 0) {
+                continue;
+            }
+            for (int k = Math.max(0, i - 3); k <= Math.min(plain.size() - 1, i + 3); k++) {
+                if (k != i && Lex.whole(plain.get(k), detail) >= 0) {
+                    int first = Math.min(i, k);
+                    int last = Math.min(plain.size() - 1, Math.max(i, k) + 1);
+                    return new int[] {at.get(first)[0], at.get(last)[1]};
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Whether a found place is only the promise of one: "the address we shall tell later". */
+    private static boolean promised(String said) {
+        List<String> later = Lex.of("later");
+        List<String> words = Near.words(said);
+        for (int i = 0; i < words.size(); i++) {
+            if (Lex.whole(words.get(i), later) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Whether a post says its meeting only roughly: a word for roughly within
+     * three words of a word for a day, a place or an hour, or at the head of
+     * a line that names a day — "the approximate date is the twelfth",
+     * "provisionally: October the third".
+     */
+    static boolean rough(String text, List<Days.Day> days) {
+        List<String> roughly = Lex.of("rough");
+        List<String> detail = Lex.of("detail");
+        HashSet<Integer> dayLines = new HashSet<Integer>();
+        for (int i = 0; i < days.size(); i++) {
+            dayLines.add(Integer.valueOf(days.get(i).line));
+        }
+        String[] rows = text.split("\n", -1);
+        for (int r = 0; r < rows.length; r++) {
+            List<String> words = Near.words(rows[r]);
+            for (int i = 0; i < words.size(); i++) {
+                if (Lex.whole(words.get(i), roughly) < 0) {
+                    continue;
+                }
+                if (i < 2 && dayLines.contains(Integer.valueOf(r))) {
+                    return true;
+                }
+                for (int k = Math.max(0, i - 3); k <= Math.min(words.size() - 1, i + 3); k++) {
+                    if (k != i && Lex.whole(words.get(k), detail) >= 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    // ------------------------------------------------------------------ whom
+
+    /**
+     * Whom the meeting reads, when no title is quoted: the post's own words
+     * from the word for reading to the end of the name after it: "we read"
+     * and a writer. Up to three words with capitals, the dots of initials
+     * between them, and one small joining word when a capital follows it.
+     */
+    static String reads(String[] rows) {
+        List<String> verbs = Lex.of("reading");
+        for (int r = 0; r < rows.length; r++) {
+            String row = Near.mend(rows[r]);
+            Matcher m = WORDS.matcher(row);
+            ArrayList<int[]> at = new ArrayList<int[]>();
+            while (m.find()) {
+                at.add(new int[] {m.start(), m.end()});
+            }
+            for (int k = 0; k + 1 < at.size(); k++) {
+                if (Lex.whole(Near.norm(row.substring(at.get(k)[0], at.get(k)[1])), verbs) < 0) {
+                    continue;
+                }
+                int last = -1;
+                int names = 0;
+                for (int j = k + 1; j < at.size() && names < 3; j++) {
+                    String between = row.substring(at.get(j - 1)[1], at.get(j)[0]);
+                    if (!between.matches("[\\s.]+")) {
+                        break;
+                    }
+                    String plain = Near.norm(row.substring(at.get(j)[0], at.get(j)[1]));
+                    if (capital(row, at.get(j)[0]) && !calendarWord(plain)) {
+                        last = j;
+                        names++;
+                    } else if (last > k && plain.length() == 1 && j + 1 < at.size()
+                        && capital(row, at.get(j + 1)[0])) {
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+                if (last > k) {
+                    String said = row.substring(at.get(k)[0], at.get(last)[1]);
+                    if (said.length() - (at.get(k)[1] - at.get(k)[0]) >= 4) {
+                        return said.replaceAll("\\s+", " ");
+                    }
+                }
             }
         }
         return "";
@@ -612,11 +1076,21 @@ final class Sift {
      * One meeting told twice is one card: the same day, and the same hour or
      * an hour said in only one of them. The richer telling stands, the
      * other lends it what it lacks, and a calling-off in either crosses it.
+     *
+     * A small club tells one meeting in instalments — a rough date, then the
+     * hour, then the place — so a telling said only roughly stands last, and
+     * lends a firm one nothing but its book: an approximate garden must not
+     * become the place of a meeting whose place is simply not yet read. A
+     * name said loosely gives way to a title in quotes. A detail promised
+     * for later is kept promised until the card has both a place and an hour.
      */
     static ArrayList<Bill> merge(List<Bill> all) {
         ArrayList<Bill> sorted = new ArrayList<Bill>(all);
         Collections.sort(sorted, new Comparator<Bill>() {
             public int compare(Bill a, Bill b) {
+                if (a.rough != b.rough) {
+                    return a.rough ? 1 : -1;
+                }
                 if (a.weight != b.weight) {
                     return b.weight - a.weight;
                 }
@@ -638,13 +1112,15 @@ final class Sift {
                 out.add(b);
                 continue;
             }
-            if (same.minutes < 0) {
+            boolean lends = !b.rough || same.rough;
+            if (lends && same.minutes < 0) {
                 same.minutes = b.minutes;
             }
-            if (same.book.length() == 0) {
+            if (b.book.length() > 0 && (same.book.length() == 0 || (same.loose && !b.loose))) {
                 same.book = b.book;
+                same.loose = b.loose;
             }
-            if (same.place.length() == 0) {
+            if (lends && same.place.length() == 0) {
                 same.place = b.place;
             }
             /* A later post that calls it off, or moves it, speaks for the meeting. */
@@ -654,6 +1130,12 @@ final class Sift {
                 if ((b.cancelled || b.moved) && b.post != same.post && b.text.length() > 0) {
                     same.note = b.text;
                 }
+            }
+        }
+        for (int i = 0; i < out.size(); i++) {
+            Bill o = out.get(i);
+            if (o.pending && o.place.length() > 0 && o.minutes >= 0) {
+                o.pending = false;
             }
         }
         return out;

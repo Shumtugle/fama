@@ -153,9 +153,12 @@ public final class Main extends Activity {
         super.onCreate(saved);
         Trace.watch(getApplicationContext());
         Round.measure(this);
+        Ways.ready(this);
+        /* A board handed out inside the package, before anything is drawn: its look may be in it. */
+        Carry.takePreset(this);
+        Carry.relook = false;
         Tone.read(this);
         Words.load(this);
-        Ways.ready(this);
         build();
         swap(boardView(false));
         Crier.listen(heard);
@@ -373,7 +376,13 @@ public final class Main extends Activity {
         fitBars(root);
     }
 
-    /** Keeps the application's own edges clear of the phone's bars. */
+    /**
+     * Keeps the application's own edges clear of the phone's bars, and of the
+     * keyboard. A newer phone draws every window from edge to edge and no
+     * longer shrinks it for the keyboard; it tells the window where the bars
+     * and the keyboard stand instead, and the window steps back from them.
+     * An older phone has already shrunk the window and tells it nothing.
+     */
     private void fitBars(final View view) {
         view.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
@@ -381,8 +390,9 @@ public final class Main extends Activity {
                 int bottom;
                 if (Build.VERSION.SDK_INT >= 30) {
                     android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+                    android.graphics.Insets keys = insets.getInsets(WindowInsets.Type.ime());
                     top = bars.top;
-                    bottom = bars.bottom;
+                    bottom = Math.max(bars.bottom, keys.bottom);
                 } else {
                     top = insets.getSystemWindowInsetTop();
                     bottom = insets.getSystemWindowInsetBottom();
@@ -696,11 +706,36 @@ public final class Main extends Activity {
     }
 
     /**
+     * The book as a card says it: a title in its quotes, or — when the post
+     * named only whom it reads — the post's own words, begun with a capital.
+     */
+    static String bookSaid(Sift.Bill b) {
+        if (!b.loose) {
+            return "\u00AB" + b.book + "\u00BB";
+        }
+        if (b.book.length() == 0) {
+            return "";
+        }
+        int first = b.book.offsetByCodePoints(0, 1);
+        return b.book.substring(0, first).toUpperCase(java.util.Locale.getDefault()) + b.book.substring(first);
+    }
+
+    /** The word a card wears about its meeting, strongest first: called off, moved, said roughly, a detail to come. */
+    static String flagOf(Sift.Bill b) {
+        return b.cancelled ? "cancelled" : b.moved ? "moved" : b.rough ? "rough" : b.pending ? "pending" : "";
+    }
+
+    /** The ink of that word: an error for a meeting called off, the third accent for a moved one, quiet for the rest. */
+    private static int flagInk(Sift.Bill b) {
+        return b.cancelled ? Bloom.errorInk() : b.moved ? Tone.of(Tone.TERTIARY) : Tone.of(Tone.ON_SURFACE_VARIANT);
+    }
+
+    /**
      * One meeting: the hour in the book face at the left, as a timetable sets
      * it; the club, the book in its quotes, the place; the channel's face at
      * the right. A meeting called off is crossed through and quieter, and
      * says so in the colour of an error; a moved one says so in the third
-     * accent.
+     * accent; one said roughly, or with a detail to come, says so quietly.
      */
     private View billCard(final Sift.Bill b, final String title) {
         LinearLayout card = new LinearLayout(this);
@@ -723,7 +758,7 @@ public final class Main extends Activity {
         said.addView(who);
         TextView book = null;
         if (b.book.length() > 0) {
-            book = Letter.serif(words(Letter.BODY_L, "\u00AB" + b.book + "\u00BB", Tone.ON_SURFACE));
+            book = Letter.serif(words(Letter.BODY_L, bookSaid(b), Tone.ON_SURFACE));
             book.setMaxLines(2);
             book.setEllipsize(android.text.TextUtils.TruncateAt.END);
             LinearLayout.LayoutParams bookParams = wide();
@@ -745,10 +780,10 @@ public final class Main extends Activity {
             placeParams.topMargin = Round.dp(4);
             said.addView(place, placeParams);
         }
-        if (b.cancelled || b.moved) {
+        if (flagOf(b).length() > 0) {
             TextView flag = Letter.set(new TextView(this), Letter.LABEL_M);
-            flag.setText(Words.s(b.cancelled ? "cancelled" : "moved"));
-            flag.setTextColor(b.cancelled ? Bloom.errorInk() : Tone.of(Tone.TERTIARY));
+            flag.setText(Words.s(flagOf(b)));
+            flag.setTextColor(flagInk(b));
             LinearLayout.LayoutParams flagParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             flagParams.topMargin = Round.dp(6);
@@ -853,7 +888,7 @@ public final class Main extends Activity {
         }
         t.append('\n');
         if (b.book.length() > 0) {
-            t.append('\u00AB').append(b.book).append('\u00BB').append('\n');
+            t.append(bookSaid(b)).append('\n');
         }
         if (b.place.length() > 0) {
             t.append(b.place).append('\n');
@@ -937,10 +972,10 @@ public final class Main extends Activity {
         whenParams.topMargin = Round.dp(2);
         column.addView(whenView, whenParams);
 
-        if (b.cancelled || b.moved) {
+        if (flagOf(b).length() > 0) {
             TextView flag = Letter.set(new TextView(this), Letter.LABEL_L);
-            flag.setText(Words.s(b.cancelled ? "cancelled" : "moved"));
-            flag.setTextColor(b.cancelled ? Bloom.errorInk() : Tone.of(Tone.TERTIARY));
+            flag.setText(Words.s(flagOf(b)));
+            flag.setTextColor(flagInk(b));
             LinearLayout.LayoutParams flagParams = wide();
             flagParams.topMargin = Round.dp(8);
             column.addView(flag, flagParams);
@@ -953,7 +988,7 @@ public final class Main extends Activity {
         }
 
         if (b.book.length() > 0) {
-            TextView book = words(Letter.HEADLINE_S, "\u00AB" + b.book + "\u00BB", Tone.ON_SURFACE);
+            TextView book = words(Letter.HEADLINE_S, bookSaid(b), Tone.ON_SURFACE);
             LinearLayout.LayoutParams bookParams = wide();
             bookParams.topMargin = Round.dp(20);
             column.addView(book, bookParams);
@@ -1144,7 +1179,7 @@ public final class Main extends Activity {
         Calendar c = Days.calendar(b.day);
         Intent add = new Intent(Intent.ACTION_INSERT).setData(CalendarContract.Events.CONTENT_URI);
         add.putExtra(CalendarContract.Events.TITLE,
-            b.book.length() > 0 ? title + " \u00B7 \u00AB" + b.book + "\u00BB" : title);
+            b.book.length() > 0 ? title + " \u00B7 " + bookSaid(b) : title);
         if (b.minutes >= 0) {
             c.set(Calendar.HOUR_OF_DAY, b.minutes / 60);
             c.set(Calendar.MINUTE, b.minutes % 60);
@@ -1340,6 +1375,7 @@ public final class Main extends Activity {
             {host + "/+\u2026", "link_closed"},
             {host + "/" + (folder.length > 0 ? folder[0] : "") + "/\u2026", "link_folder"},
             {"@one  @two  @three", "link_list"},
+            {"12.06  19:00  \u2026", "link_said"},
             {Carry.HEAD + "  \u2026", "link_carry"},
         };
         for (int i = 0; i < kinds.length; i++) {
@@ -1997,7 +2033,10 @@ public final class Main extends Activity {
     /**
      * The field takes a channel by hand: its link, pasted, or its short name,
      * with or without the sign before it. The way in for whoever found a
-     * channel somewhere that cannot share it.
+     * channel somewhere that cannot share it — and, for an announcement that
+     * lives on a page of its own and not in any channel, the way in for the
+     * words themselves: an announcement pasted whole goes to the sheet, which
+     * weighs it and keeps the meeting by hand.
      */
     private void askAdd() {
         adding = true;
@@ -2042,6 +2081,15 @@ public final class Main extends Activity {
             name = typed.startsWith("@") ? typed.substring(1) : typed;
         }
         if (name == null) {
+            /* More than one word: not a name at all, but an announcement someone pasted. */
+            if (typed.matches("(?s).*\\s.*")) {
+                Intent said = new Intent(this, Take.class);
+                said.setAction(Intent.ACTION_SEND);
+                said.setType("text/plain");
+                said.putExtra(Intent.EXTRA_TEXT, typed);
+                startActivity(said);
+                return;
+            }
             flash(Glyph.CROSS, Words.s("not_channel"));
             return;
         }

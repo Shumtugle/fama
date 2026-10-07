@@ -1,13 +1,17 @@
 #!/bin/sh
 set -e
 SDK=${SDK:-$HOME/sdk/android-33.jar}
-NAME=${1:-fama-0.3.0}
+NAME=${1:-fama-0.3.5}
 OUT=$PWD/out
 rm -rf build "$OUT"; mkdir -p build/classes build/gen build/assets/modules "$OUT"
 
 # The package carries the lexicon, the ways, and the language modules beside the code.
 cp assets/*.txt build/assets/
 cp modules/ru.txt build/assets/modules/ru.txt
+# A board handed out ready: PRESET names a carried board, or any text with channels, kept outside the tree.
+if [ -n "$PRESET" ]; then
+  cp "$PRESET" build/assets/preset.txt
+fi
 
 aapt package -f -m -J build/gen -M AndroidManifest.xml -S res -I "$SDK"
 javac -source 8 -target 8 -bootclasspath "$SDK" -classpath "$SDK" \

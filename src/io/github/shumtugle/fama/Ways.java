@@ -161,6 +161,8 @@ final class Ways {
         if (text == null || hosts.length == 0) {
             return out;
         }
+        /* A site that sends its links through a redirect of its own hides them, escaped, inside it. */
+        text = text + "\n" + unescaped(text);
         Matcher m = link(hosts).matcher(text);
         while (m.find()) {
             String first = m.group(1);
@@ -175,6 +177,46 @@ final class Ways {
             once(out, said.group(1));
         }
         return out;
+    }
+
+    /**
+     * A text with its escaped marks written out: every percent sign and two
+     * hex digits becomes the byte it stands for, and the bytes are read as
+     * the text they spell. A plus is left a plus, since in a link to a closed
+     * channel it is what closes it.
+     */
+    static String unescaped(String text) {
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        StringBuilder out = new StringBuilder();
+        int n = text.length();
+        for (int i = 0; i < n; i++) {
+            char c = text.charAt(i);
+            if (c == '%' && i + 2 < n && Character.digit(text.charAt(i + 1), 16) >= 0
+                && Character.digit(text.charAt(i + 2), 16) >= 0) {
+                bytes.write(Character.digit(text.charAt(i + 1), 16) * 16 + Character.digit(text.charAt(i + 2), 16));
+                i += 2;
+                continue;
+            }
+            if (bytes.size() > 0) {
+                out.append(spelled(bytes));
+            }
+            out.append(c);
+        }
+        if (bytes.size() > 0) {
+            out.append(spelled(bytes));
+        }
+        return out.toString();
+    }
+
+    private static String spelled(java.io.ByteArrayOutputStream bytes) {
+        String t;
+        try {
+            t = bytes.toString("UTF-8");
+        } catch (java.io.UnsupportedEncodingException never) {
+            t = "";
+        }
+        bytes.reset();
+        return t;
     }
 
     private static void once(ArrayList<String> names, String name) {

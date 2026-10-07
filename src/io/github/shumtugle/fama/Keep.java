@@ -61,6 +61,15 @@ public final class Keep {
     }
 
     /** When every channel was last read through, or nought. */
+    /** Which board inside the package was taken up last, known by its text. */
+    public static String preset(Context context) {
+        return store(context).getString("preset", "");
+    }
+
+    public static void savePreset(Context context, String token) {
+        store(context).edit().putString("preset", token).apply();
+    }
+
     public static long readAt(Context context) {
         return store(context).getLong("readAt", 0L);
     }

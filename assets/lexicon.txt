@@ -51,7 +51,7 @@ hour	ч час часа часов
 event	встреч заседан обсужд обсуд собира собер собрани читаем чтени дискусс лекци презентац приходит приглаша ждем анонс регистрац записат беседа
 
 # what says where
-place	адрес ул улица пр проспект наб набережная пер переулок пл площадь метро м кафе кофейн библиотек магазин бар лофт пространств музей галере антикафе
+place	адрес ул улица пр проспект наб набережная пер переулок пл площадь метро м кафе кофейн библиотек магазин бар лофт пространств музей галере антикафе сад саду саде сада сквер парке парка парку остров
 
 # pictures that say where
 pins	📍 📌 🏠 🗺 🏛
@@ -60,12 +60,14 @@ pins	📍 📌 🏠 🗺 🏛
 book	роман книга книгу книги повесть повести сборник рассказ пьеса автор произведен
 
 # words before a title that is the place, not the book
-venue	кафе кофейн магазин бар лофт пространств ресторан антикафе клуб библиотек музей галере зал
+venue	кафе кофейн магазин бар лофт пространств ресторан антикафе клуб библиотек музей галере зал парк сад сквер
 
 # what turns a post away: a report of what has already been, not a call to what is coming;
 # each word met only whole, or, marked with a star, as the start of a word;
 # it takes weight off instead of adding it
 away	прошла прошел прошло прошли состоял* итоги фотоотчет*
+# words that turn a report word back to what is coming, standing next to it: the totals yet to be drawn
+unaway	подведем подведут будут
 # the letters a word's other forms may drop at its end, for words added by hand
 ending	а е и о у ы э ю я ь
 # a meeting called off, or moved
@@ -74,3 +76,20 @@ moved	перенос перенес переносит
 
 # a paid post, marked as the law asks
 advert	реклама рекламный erid
+
+# a meeting not settled yet: a day or a place said roughly, met near a word for such a thing or before a day
+rough	примерн* предварительн* ориентировочн*
+# a detail promised for later: a word that promises, met within a few words of a word for what is promised;
+# the words between them speak about the meeting and do not call anyone to it
+later	напишем сообщим объявим уточним уточняется уточнится позже позднее
+detail	место места месте адрес время дата дату локаци* площадк* подробност* детал*
+
+# the small words a place is entered by, after a word that calls people together
+into	в во на
+# the words that make a line a spare plan, not the plan: its place is taken only when no other is said
+spare	если иначе случае запасн*
+# the short forms a street, a house or a name is written with; the full stop after them does not end a place
+abbrev	ул пр наб пер пл м им д ст стр корп лит г
+
+# the words for reading or discussing, after which a name stands when no title is quoted
+reading	читаем читать обсуждаем обсудим разбираем прочтем
